@@ -26,6 +26,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //	runtimeOnly 'org.h2:postgresql'
 	implementation 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
