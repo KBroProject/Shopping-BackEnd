@@ -9,10 +9,13 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class SocialAccount {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "SOCAIL_ACCOUNT_ID")
+    private Long id;
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @JoinColumn(name = "ACCOUNT_ID")
+    private Account account;
 
     @Column(length = 100)
     private String UUID;
