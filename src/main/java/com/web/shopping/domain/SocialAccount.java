@@ -9,10 +9,10 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class SocialAccount {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "SOCAIL_ACCOUNT_ID")
+    @Id
     private Long id;
 
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOUNT_ID")
     private Account account;

@@ -46,4 +46,7 @@ public class Account {
 
     // 로그인하면 Spring security 로그인 성공 시 lastLogin을 update
     private LocalDateTime lastLogin;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private SocialAccount socialAccount;
 }
