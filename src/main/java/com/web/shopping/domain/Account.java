@@ -35,7 +35,7 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'INACTIVE'")
-    private StatusEnum status = StatusEnum.INACTIVE;
+    private AccountStatus status = AccountStatus.INACTIVE;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'BUYER'")

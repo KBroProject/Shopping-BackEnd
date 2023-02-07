@@ -1,5 +1,5 @@
 package com.web.shopping.domain;
 
-public enum StatusEnum {
+public enum AccountStatus {
     ACTIVE, INACTIVE, DELETE
 }
