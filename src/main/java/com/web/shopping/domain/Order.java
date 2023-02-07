@@ -1,13 +1,15 @@
 package com.web.shopping.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "orders")
 @Entity
 public class Order {
 
@@ -19,12 +21,12 @@ public class Order {
     @JoinColumn(name = "USER_ID")
     private Account account;
 
-    @Column(length = 10)
-    @ColumnDefault("'PREPARING'")
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'READY'")
+    private OrderStatus orderStatus = OrderStatus.READY;
 
-    @Column(length = 50, nullable = false)
-    private String delivery;
+    @OneToOne(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Delivery delivery;
 
     @Column(nullable = false)
     private int orderPrice;
