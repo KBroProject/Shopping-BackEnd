@@ -1,5 +1,6 @@
 package com.web.shopping.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -43,6 +44,7 @@ public class Account {
 
     @CreationTimestamp
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @UpdateTimestamp
     private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -52,6 +54,10 @@ public class Account {
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SocialAccount socialAccount;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<Order>();
+    @OneToMany(mappedBy = "account")
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
+    private List<Item> items = new ArrayList<>();
+
 }
