@@ -1,4 +1,4 @@
-package com.web.shopping.domain;
+package com.web.shopping.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

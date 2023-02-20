@@ -1,4 +1,4 @@
-package com.web.shopping.domain;
+package com.web.shopping.entity;
 
 public enum AccountStatus {
     ACTIVE, INACTIVE, DELETE

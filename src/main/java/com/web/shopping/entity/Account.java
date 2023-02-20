@@ -1,5 +1,6 @@
-package com.web.shopping.domain;
+package com.web.shopping.entity;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Account {
@@ -60,4 +61,13 @@ public class Account {
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 
+    @Builder
+    public Account(String email, String name, String password, String phoneNumber, AccountStatus status, RoleEnum role) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.status = status;
+        this.role = role;
+    }
 }

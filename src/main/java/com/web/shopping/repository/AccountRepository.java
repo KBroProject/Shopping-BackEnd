@@ -1,6 +1,6 @@
 package com.web.shopping.repository;
 
-import com.web.shopping.domain.Account;
+import com.web.shopping.entity.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
