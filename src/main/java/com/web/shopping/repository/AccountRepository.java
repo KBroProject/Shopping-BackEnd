@@ -13,15 +13,15 @@ public class AccountRepository {
     private final EntityManager em;
 
     public Long save(Account account){
-        if (findByName(account.getName()).isEmpty()){
+        if (findByEmail(account.getEmail()).isEmpty()){
             em.persist(account);
             return account.getId();
         }
         return -1L;
     }
 
-    public List<Account> findByName(String name){
-        return em.createQuery("select a from Account a where a.name= :name", Account.class)
+    public List<Account> findByEmail(String eamil){
+        return em.createQuery("select a from Account a where a.email= :email", Account.class)
                 .getResultList();
     }
 }
