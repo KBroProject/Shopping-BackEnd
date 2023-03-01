@@ -1,11 +1,13 @@
-package com.web.shopping.domain;
+package com.web.shopping.entity;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Account {
@@ -22,7 +24,7 @@ public class Account {
     @Column(name = "ACCOUNT_ID")
     private Long id;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
     @Column(length = 100)
@@ -40,7 +42,7 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'BUYER'")
-    private RoleEnum role;
+    private RoleEnum role = RoleEnum.BUYER;
 
     @CreationTimestamp
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -60,4 +62,16 @@ public class Account {
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 
+    @Builder
+    public Account(String email, String name, String password, String phoneNumber) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Account hashPassword(PasswordEncoder passwordEncoder){
+        this.password = passwordEncoder.encode(this.password);
+        return this;
+    }
 }

@@ -1,4 +1,4 @@
-package com.web.shopping.domain;
+package com.web.shopping.entity;
 
 public enum RoleEnum {
     BUYER, OWNER, ADMIN, SUPER_ADMIN
