@@ -1,18 +1,23 @@
 package com.web.shopping.controller;
 
+import com.web.shopping.dto.RequestAccountDto;
 import com.web.shopping.entity.Account;
+import com.web.shopping.service.AccountService;
 import lombok.Data;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/api")
 public class AccountController {
+
+    private final AccountService accountService;
 
     @GetMapping("/test")
     public TestDto helloWord(){
@@ -21,9 +26,17 @@ public class AccountController {
         List<TestDto> accountDto = account.stream()
                 .map(a -> new TestDto(a.getName()))
                 .collect(Collectors.toList());
-
         return testDto;
     }
+
+    @PostMapping("/members")
+    public long joinMembers(@RequestBody @Valid RequestAccountDto requestAccountDto) {
+
+        long id = accountService.save(requestAccountDto);
+
+        return id;
+    }
+
 
     @Data
     class TestDto{
@@ -32,6 +45,4 @@ public class AccountController {
             this.test = test;
         }
     }
-
-
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'BUYER'")
-    private RoleEnum role;
+    private RoleEnum role = RoleEnum.BUYER;
 
     @CreationTimestamp
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -62,12 +63,15 @@ public class Account {
     private List<Item> items = new ArrayList<>();
 
     @Builder
-    public Account(String email, String name, String password, String phoneNumber, AccountStatus status, RoleEnum role) {
+    public Account(String email, String name, String password, String phoneNumber) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.status = status;
-        this.role = role;
+    }
+
+    public Account hashPassword(PasswordEncoder passwordEncoder){
+        this.password = passwordEncoder.encode(this.password);
+        return this;
     }
 }

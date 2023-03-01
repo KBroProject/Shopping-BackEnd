@@ -20,8 +20,9 @@ public class AccountRepository {
         return -1L;
     }
 
-    public List<Account> findByEmail(String eamil){
+    public List<Account> findByEmail(String email){
         return em.createQuery("select a from Account a where a.email= :email", Account.class)
+                .setParameter("email", email)
                 .getResultList();
     }
 }
