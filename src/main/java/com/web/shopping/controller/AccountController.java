@@ -19,15 +19,15 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @GetMapping("/test")
-    public TestDto helloWord(){
-        TestDto testDto = new TestDto("Hello~");
-        List<Account> account = new ArrayList<>();
-        List<TestDto> accountDto = account.stream()
-                .map(a -> new TestDto(a.getName()))
-                .collect(Collectors.toList());
-        return testDto;
-    }
+//    @GetMapping("/test")
+//    public TestDto helloWord(){
+//        TestDto testDto = new TestDto("Hello~");
+//        List<Account> account = new ArrayList<>();
+//        List<TestDto> accountDto = account.stream()
+//                .map(a -> new TestDto(a.getName()))
+//                .collect(Collectors.toList());
+//        return testDto;
+//    }
 
     @PostMapping("/members")
     public long joinMembers(@RequestBody @Valid RequestAccountDto requestAccountDto) {
@@ -37,12 +37,18 @@ public class AccountController {
         return id;
     }
 
+    @GetMapping("/login")
+    public String loginMembers(@RequestBody RequestAccountDto requestAccountDto) {
+        String resultMsg = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
 
-    @Data
-    class TestDto{
-        private String test;
-        public TestDto(String test){
-            this.test = test;
-        }
+        return resultMsg;
     }
+
+//    @Data
+//    class TestDto{
+//        private String test;
+//        public TestDto(String test){
+//            this.test = test;
+//        }
+//    }
 }
