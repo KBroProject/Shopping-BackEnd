@@ -2,6 +2,8 @@ package com.web.shopping.service;
 
 import com.web.shopping.dto.RequestAccountDto;
 import com.web.shopping.entity.Account;
+import com.web.shopping.exception.CustomException;
+import com.web.shopping.exception.ErrorCode;
 import com.web.shopping.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,9 +23,23 @@ public class AccountService {
 
     // 중복 검사 체크
     public void validateDuplicateAccount(String email) {
-        List<Account> findAccounts = accountRepository.findByEmail(email);
-        if(!findAccounts.isEmpty()){
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        Optional<Account> findAccount = accountRepository.findByEmail(email);
+        if(findAccount.isPresent()){
+            throw new CustomException(ErrorCode.SAME_EMAIL);
+        }
+    }
+
+    // 유저 정보가져오기(selectOne) + 로그인
+    public Account selectAccount(String email, String password) {
+        Optional<Account> findAccount = accountRepository.findByEmail(email);
+        if(findAccount.isPresent()) {
+            if(bCryptPasswordEncoder.matches(password, findAccount.get().getPassword())) {
+                return findAccount.get();
+            } else {
+                throw new CustomException(ErrorCode.FAIL_PASSWORD);
+            }
+        } else {
+            throw new CustomException(ErrorCode.NO_USER);
         }
     }
 

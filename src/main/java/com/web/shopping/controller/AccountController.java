@@ -2,15 +2,13 @@ package com.web.shopping.controller;
 
 import com.web.shopping.dto.RequestAccountDto;
 import com.web.shopping.entity.Account;
+import com.web.shopping.security.JwtTokenProvider;
 import com.web.shopping.service.AccountService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,6 +16,7 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     private final AccountService accountService;
+    private final JwtTokenProvider jwtTokenProvider;
 
 //    @GetMapping("/test")
 //    public TestDto helloWord(){
@@ -38,10 +37,13 @@ public class AccountController {
     }
 
     @GetMapping("/login")
-    public String loginMembers(@RequestBody RequestAccountDto requestAccountDto) {
-        String resultMsg = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
+    public String loginMembers(@RequestBody RequestAccountDto requestAccountDto, HttpServletResponse response) {
+        Account account = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
+        String token = jwtTokenProvider.createToken(account.getEmail(), account.getRole());
+        response.setHeader("JWT", token);
 
-        return resultMsg;
+        return token;
+
     }
 
 //    @Data
