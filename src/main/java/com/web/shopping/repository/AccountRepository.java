@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,9 +21,10 @@ public class AccountRepository {
         return -1L;
     }
 
-    public List<Account> findByEmail(String email){
-        return em.createQuery("select a from Account a where a.email= :email", Account.class)
+    public Optional<Account> findByEmail(String email){
+        List<Account> account = em.createQuery("select a from Account a where a.email= :email", Account.class)
                 .setParameter("email", email)
                 .getResultList();
+        return account.stream().findAny();
     }
 }
