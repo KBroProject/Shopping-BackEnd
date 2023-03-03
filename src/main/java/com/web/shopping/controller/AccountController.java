@@ -17,6 +17,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final JwtTokenProvider jwtTokenProvider;
+
 //    @GetMapping("/test")
 //    public TestDto helloWord(){
 //        TestDto testDto = new TestDto("Hello~");
@@ -42,6 +43,7 @@ public class AccountController {
         response.setHeader("JWT", token);
 
         return token;
+
     }
 
 //    @Data

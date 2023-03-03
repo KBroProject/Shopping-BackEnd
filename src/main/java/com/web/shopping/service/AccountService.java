@@ -43,6 +43,20 @@ public class AccountService {
         }
     }
 
+    // 유저 정보가져오기(selectOne) + 로그인
+    public String selectAccount(String email, String password) {
+        List<Account> findAccounts = accountRepository.findByEmail(email);
+        if(!findAccounts.isEmpty()) {
+            if(bCryptPasswordEncoder.matches(password, findAccounts.get(0).getPassword())) {
+                return findAccounts.get(0).getName()+ "로그인 성공";
+            } else {
+                throw new IllegalStateException("비밀번호가 틀렸습니다.");
+            }
+        } else {
+            throw new IllegalStateException("회원 정보가 없습니다.");
+        }
+    }
+
     // 회원 가입
     @Transactional
     public Long save(RequestAccountDto requestAccountDto){
