@@ -28,8 +28,11 @@ public class JwtTokenProvider {
     @Value("${jwt.token.key}")
     private String secretKey;
 
-    //토큰 유효시간 설정(30분)
-    private Long tokenValidTime = 30 * 60 * 1000L;
+    // access 토큰 유효시간 설정(30분)
+    private final Long accessTokenValidTime = 30 * 60 * 1000L;
+
+    // refresh 토큰 유효시간 설정(30분)
+    private final Long refreshTokenValidTime = 24 * 14 * 3600L;
 
     //secretkey를 미리 인코딩 해줌.
     @PostConstruct
@@ -46,7 +49,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims()
                 .setSubject("access_token") //토큰제목
                 .setIssuedAt(now) //발행시간
-                .setExpiration(new Date(now.getTime() + tokenValidTime)); // 토큰 만료기한
+                .setExpiration(new Date(now.getTime() + accessTokenValidTime)); // 토큰 만료기한
 
         //private claims
         claims.put("email", email); // 정보는 key - value 쌍으로 저장.

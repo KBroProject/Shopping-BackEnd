@@ -38,9 +38,8 @@ public class AccountController {
 
     @GetMapping("/login")
     public String loginMembers(@RequestBody RequestAccountDto requestAccountDto, HttpServletResponse response) {
-        Account account = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
-        String token = jwtTokenProvider.createToken(account.getEmail(), account.getRole());
-        response.setHeader("JWT", token);
+        String token = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
+        response.setHeader("Authorization", "Bearer " + token);
 
         return token;
 

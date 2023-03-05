@@ -5,6 +5,7 @@ import com.web.shopping.entity.Account;
 import com.web.shopping.exception.CustomException;
 import com.web.shopping.exception.ErrorCode;
 import com.web.shopping.repository.AccountRepository;
+import com.web.shopping.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,26 +21,25 @@ import java.util.Optional;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 중복 검사 체크
     public void validateDuplicateAccount(String email) {
-        Optional<Account> findAccount = accountRepository.findByEmail(email);
-        if(findAccount.isPresent()){
-            throw new CustomException(ErrorCode.SAME_EMAIL);
-        }
+        Account account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.SAME_EMAIL));
     }
 
     // 유저 정보가져오기(selectOne) + 로그인
-    public Account selectAccount(String email, String password) {
-        Optional<Account> findAccount = accountRepository.findByEmail(email);
-        if(findAccount.isPresent()) {
-            if(bCryptPasswordEncoder.matches(password, findAccount.get().getPassword())) {
-                return findAccount.get();
-            } else {
-                throw new CustomException(ErrorCode.FAIL_PASSWORD);
-            }
+    public String selectAccount(String email, String password) {
+        Account account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_USER));
+        if(bCryptPasswordEncoder.matches(password, account.getPassword())) {
+            String token = jwtTokenProvider.createToken(account.getEmail()
+                    , account.getRole());
+            // DB에 토큰 넣는부분 추가
+            return token;
         } else {
-            throw new CustomException(ErrorCode.NO_USER);
+            throw new CustomException(ErrorCode.FAIL_PASSWORD);
         }
     }
 
