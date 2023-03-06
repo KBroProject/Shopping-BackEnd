@@ -1,6 +1,7 @@
 package com.web.shopping.controller;
 
 import com.web.shopping.dto.RequestAccountDto;
+import com.web.shopping.dto.ResponseDto;
 import com.web.shopping.entity.Account;
 import com.web.shopping.security.JwtTokenProvider;
 import com.web.shopping.service.AccountService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,11 +39,11 @@ public class AccountController {
     }
 
     @GetMapping("/login")
-    public String loginMembers(@RequestBody RequestAccountDto requestAccountDto, HttpServletResponse response) {
-        String token = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
-        response.setHeader("Authorization", "Bearer " + token);
+    public ResponseDto loginMembers(@RequestBody RequestAccountDto requestAccountDto, HttpServletResponse response) {
+        Map<String, String> tokenSet = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
+        response.setHeader("Authorization", "Bearer " + tokenSet.get("accessToken"));
 
-        return token;
+        return new ResponseDto(200, "token",tokenSet);
 
     }
 

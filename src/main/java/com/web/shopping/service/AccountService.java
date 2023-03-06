@@ -11,7 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -25,22 +27,27 @@ public class AccountService {
 
     // 중복 검사 체크
     public void validateDuplicateAccount(String email) {
-        Account account = accountRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.SAME_EMAIL));
+        if(accountRepository.findByEmail(email).isPresent()){
+            throw new CustomException(ErrorCode.SAME_EMAIL);
+        }
     }
 
     // 유저 정보가져오기(selectOne) + 로그인
-    public String selectAccount(String email, String password) {
+    public Map<String, String> selectAccount(String email, String password) {
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_USER));
-        if(bCryptPasswordEncoder.matches(password, account.getPassword())) {
-            String token = jwtTokenProvider.createToken(account.getEmail()
-                    , account.getRole());
-            // DB에 토큰 넣는부분 추가
-            return token;
-        } else {
+        if(!bCryptPasswordEncoder.matches(password, account.getPassword()))
             throw new CustomException(ErrorCode.FAIL_PASSWORD);
-        }
+
+        String accessToken = jwtTokenProvider.createAccessToken(account.getEmail()
+                , account.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(account.getEmail()
+                , account.getRole());
+        Map<String, String> tokenSet = new HashMap<>();
+        tokenSet.put("accessToken", accessToken);
+        tokenSet.put("refreshToken", refreshToken);
+        // DB에 토큰 넣는부분 추가
+        return tokenSet;
     }
 
 
