@@ -1,5 +1,6 @@
 package com.web.shopping.security;
 
+import com.web.shopping.dto.TokenUserDto;
 import com.web.shopping.entity.RoleEnum;
 import com.web.shopping.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
@@ -94,9 +95,18 @@ public class JwtTokenProvider {
         return (String) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("email");
     }
 
+    public TokenUserDto getUserData(String token){
+        Claims body = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return new TokenUserDto((String) body.get("email"), RoleEnum.valueOf((String) body.get("role")));
+    }
+
     // Request의 Header에서 token 값을 가져옵니다. "Authorization" : "TOKEN값'
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
+        String token = request.getHeader("Authorization");
+        if ( token == null || !token.startsWith("Bearer "))
+            return null;
+
+        return token.split(" ")[1];
     }
 
     // JWT의 유효성 확인하는 코드

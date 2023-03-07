@@ -12,7 +12,8 @@ public enum ErrorCode {
     FAIL_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
     NO_USER(HttpStatus.BAD_REQUEST, "없는 사용자입니다."),
     NO_LOGIN(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다"),
-    NO_ADMIN(HttpStatus.FORBIDDEN, "권한이 없는 사용자입니다");
+    NO_ADMIN(HttpStatus.FORBIDDEN, "권한이 없는 사용자입니다"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
 
     private HttpStatus httpStatus;
     private String detail;

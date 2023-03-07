@@ -1,6 +1,7 @@
 package com.web.shopping.service;
 
 import com.web.shopping.dto.RequestAccountDto;
+import com.web.shopping.dto.TokenUserDto;
 import com.web.shopping.entity.Account;
 import com.web.shopping.exception.CustomException;
 import com.web.shopping.exception.ErrorCode;
@@ -58,5 +59,14 @@ public class AccountService {
         Account account = requestAccountDto.toEntiy();
         account.hashPassword(bCryptPasswordEncoder);
         return accountRepository.save(account);
+    }
+
+    public String reissueAccessToken(String token){
+        if(!jwtTokenProvider.validateToken(token))
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+
+        TokenUserDto user = jwtTokenProvider.getUserData(token);
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
+        return accessToken;
     }
 }
