@@ -3,11 +3,15 @@ package com.web.shopping.service;
 import com.web.shopping.dto.RequestAccountDto;
 import com.web.shopping.dto.TokenUserDto;
 import com.web.shopping.entity.Account;
+import com.web.shopping.entity.RoleEnum;
 import com.web.shopping.exception.CustomException;
 import com.web.shopping.exception.ErrorCode;
+import com.web.shopping.redis.RefreshToken;
+import com.web.shopping.redis.RefreshTokenRepository;
 import com.web.shopping.repository.AccountRepository;
 import com.web.shopping.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 중복 검사 체크
     public void validateDuplicateAccount(String email) {
@@ -47,6 +52,15 @@ public class AccountService {
         Map<String, String> tokenSet = new HashMap<>();
         tokenSet.put("accessToken", accessToken);
         tokenSet.put("refreshToken", refreshToken);
+
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                    .token(refreshToken)
+                    .email(account.getEmail())
+                    .role(account.getRole().toString())
+                    .build()
+        );
+
         // DB에 토큰 넣는부분 추가
         return tokenSet;
     }
@@ -62,11 +76,12 @@ public class AccountService {
     }
 
     public String reissueAccessToken(String token){
-        if(!jwtTokenProvider.validateToken(token))
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        RefreshToken findRefreshToken = refreshTokenRepository.findById(token)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_REDIS_TOKEN));
 
-        TokenUserDto user = jwtTokenProvider.getUserData(token);
-        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
+        String accessToken = jwtTokenProvider.createAccessToken(findRefreshToken.getEmail(),
+                RoleEnum.valueOf(findRefreshToken.getRole()));
+
         return accessToken;
     }
 }
