@@ -59,7 +59,6 @@ public class AccountController {
         refreshToken = refreshToken.split(" ")[1];
         String accessToken = accountService.reissueAccessToken(refreshToken);
         return new ResponseDto(200, "success", accessToken);
-
     }
 
 //    @Data
