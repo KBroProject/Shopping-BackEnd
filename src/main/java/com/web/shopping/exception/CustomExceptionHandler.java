@@ -12,7 +12,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(value = {CustomException.class})
     public ResponseEntity<Object> handleCustomErrorException(CustomException exception) {
         log.error("throw customException : {}", exception.getErrorCode());
-        ResponseDto restApiException = new ResponseDto(exception.getErrorCode().getHttpStatus().value(), exception.getErrorCode().getDetail(), "");
+        ResponseDto restApiException = new ResponseDto(exception.getErrorCode().getHttpStatus().value(), exception.getErrorCode().getDetail(), "", "");
         return new ResponseEntity<>(restApiException, exception.getErrorCode().getHttpStatus());
     }
 }

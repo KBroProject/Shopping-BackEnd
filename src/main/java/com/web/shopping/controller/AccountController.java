@@ -21,7 +21,6 @@ import java.util.Map;
 public class AccountController {
 
     private final AccountService accountService;
-    private final JwtTokenProvider jwtTokenProvider;
 
 //    @GetMapping("/test")
 //    public TestDto helloWord(){
@@ -42,11 +41,14 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseDto loginMembers(@RequestBody RequestAccountDto requestAccountDto, HttpServletResponse response) {
+    public ResponseDto loginMembers(@RequestBody RequestAccountDto requestAccountDto, HttpServletResponse response, HttpServletRequest request) {
+        if(request.getHeader("Authorization") != null || request.getHeader("Refresh") != null) {
+            throw new CustomException(ErrorCode.LOGIN_TOKEN_DETECTED);
+        }
         Map<String, String> tokenSet = accountService.selectAccount(requestAccountDto.getEmail(), requestAccountDto.getPassword());
         response.setHeader("Authorization", "Bearer " + tokenSet.get("accessToken"));
 
-        return new ResponseDto(200, "success", tokenSet);
+        return new ResponseDto(200, "success", "로그인 성공", tokenSet);
 
     }
 
@@ -58,7 +60,15 @@ public class AccountController {
 
         refreshToken = refreshToken.split(" ")[1];
         String accessToken = accountService.reissueAccessToken(refreshToken);
-        return new ResponseDto(200, "success", accessToken);
+        return new ResponseDto(200, "success", "토큰 정보가 갱신되었습니다.", accessToken);
+    }
+
+    @GetMapping("/logout")
+    public ResponseDto logoutMembers(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization");
+        accountService.logout(accessToken);
+
+        return new ResponseDto(200, "success", "로그아웃 되었습니다.", "");
     }
 
 //    @Data

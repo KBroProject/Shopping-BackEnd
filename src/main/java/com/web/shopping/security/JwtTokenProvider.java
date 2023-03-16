@@ -31,9 +31,8 @@ public class JwtTokenProvider {
     // access 토큰 유효시간 설정(30분)
     private final Long accessTokenValidTime = 30 * 60 * 1000L;
 
-    // refresh 토큰 유효시간 설정(30분)
-    private final Long refreshTokenValidTime = 24 * 14 * 3600L;
-    private Key key;
+    // refresh 토큰 유효시간 설정(2주)
+    private final Long refreshTokenValidTime = 24 * 3600 * 1000L;
 
     //secretkey를 미리 인코딩 해줌.
     @PostConstruct
@@ -131,6 +130,18 @@ public class JwtTokenProvider {
             log.error("Exception");
         }
         return false;
+    }
+
+    // accessToken 남은 유효시간
+    public Long getExpiration(String accessToken) {
+        Date expiration = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getExpiration();
+        // 현재 시간
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
 }
