@@ -20,7 +20,7 @@ import java.util.List;
 @Entity
 public class Account {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ACCOUNT_ID")
     private Long id;
 
@@ -73,5 +73,9 @@ public class Account {
     public Account hashPassword(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
         return this;
+    }
+
+    public void createItem(Item item){
+        this.items.add(item);
     }
 }

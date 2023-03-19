@@ -67,7 +67,7 @@ public class AccountController {
     public ResponseDto logoutMembers(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");
         if(accessToken == null) {
-            throw new CustomException(ErrorCode.LOGIN_TOKEN_DETECTED);
+            throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
         }
         accountService.logout(accessToken);
 

@@ -1,5 +1,6 @@
 package com.web.shopping.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ITEM_ID")
     private Long id;
 
@@ -31,6 +32,16 @@ public class Item {
     @OneToMany(mappedBy = "item")
     private List<CartItem> cartItems = new ArrayList<>();
 
+    @Builder
+    public Item(String name, int price, int stockQuantity, Account seller){
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.seller = seller;
+        addSeller(seller);
+    }
 
-
+    public void addSeller(Account seller){
+        seller.createItem(this);
+    }
 }

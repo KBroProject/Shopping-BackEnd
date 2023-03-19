@@ -27,4 +27,10 @@ public class AccountRepository {
                 .getResultList();
         return account.stream().findAny();
     }
+
+    public Account findById(long id){
+        return em.createQuery("select a from Account a where a.id = :id", Account.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
 }
