@@ -66,6 +66,9 @@ public class AccountController {
     @GetMapping("/logout")
     public ResponseDto logoutMembers(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");
+        if(accessToken == null) {
+            throw new CustomException(ErrorCode.LOGIN_TOKEN_DETECTED);
+        }
         accountService.logout(accessToken);
 
         return new ResponseDto(200, "success", "로그아웃 되었습니다.", "");
